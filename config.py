@@ -5,7 +5,27 @@
 # 摄像头编号
 # Windows 上 USB 摄像头通常是 0
 # 到 Jetson 上如果打不开，可以改成 1、2 试试
-CAMERA_INDEX = 1
+CAMERA_INDEX = 0
+
+#自己设置摄像头分辨率
+FRAME_WIDTH = 640
+FRAME_HEIGHT = 480
+
+# 目标颜色的 HSV 下限
+LOWER_COLOR = (0, 43, 46)
+
+#红色比较特殊，它在 HSV 色环两端：
+#0 ~ 10       一段红色
+#170 ~ 179    另一段红色
+#所以要写两个上下限，对应两个mask，最后合并
+# 目标颜色的 HSV 上限
+UPPER_RED1 = (10, 255, 255)
+UPPER_RED2 = (179, 255, 255)
+
+# 最小目标面积，小于这个面积就认为是噪声
+LOWER_RED1 = (0, 43, 46)
+LOWER_RED2 = (170, 43, 46)
+
 
 # OpenCV 显示窗口的名字
 WINDOW_NAME = "USB Camera"

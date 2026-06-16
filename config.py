@@ -26,6 +26,17 @@ UPPER_RED2 = (179, 255, 255)
 LOWER_RED1 = (0, 43, 46)
 LOWER_RED2 = (170, 43, 46)
 
-
+# 最小目标面积，小于这个面积就认为是噪声
+# 最大目标面积，大于这个面积就认为是噪声
+MIN_TARGET_AREA = 500
+MAX_TARGET_AREA = 50000
 # OpenCV 显示窗口的名字
 WINDOW_NAME = "USB Camera"
+
+# 目标的宽高比，小于这个值就认为是噪声
+MIN_ASPECT_RATIO = 0.5
+# 目标的宽高比，大于这个值就认为是噪声
+MAX_ASPECT_RATIO = 2.0
+
+# 形态学卷积核的大小
+MORPH_KERNEL_SIZE = 5

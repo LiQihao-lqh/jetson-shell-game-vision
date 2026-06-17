@@ -11,5 +11,8 @@ __pycache__/
 *.jpg
 *.png
 
+# Hiwonder Jetson SDK, not used in current Windows pyserial project
+sdk/
+
 .DS_Store
 Thumbs.db

@@ -1,27 +1,31 @@
 import time
+import threading
 import cv2
 
 from config import (
     CAMERA_INDEX,
+    SERVO_PORT,
+    SERVO_BAUDRATE,
     WINDOW_NAME,
     FRAME_WIDTH,
     FRAME_HEIGHT,
 )
 
+#传参数：servo，是舵机控制器对象，用于控制云台舵机的位置
+#detect_target, draw_target，GimbalTracker都是main里面新创建的，用于接受servo对象
 from vision_detector import detect_target, draw_target
 from servo_controller import ServoController
-from gimbal_tracker import GimbalTracker
+from tracker_controller import GimbalTracker
 
 
 def main():
     # 1. 创建舵机控制对象
-    servo = ServoController(port="COM4", baudrate=115200)
+    servo = None
 
     # 2. 创建云台追踪对象
-    tracker = GimbalTracker(servo)
+    tracker = None
 
     # 3. 云台回到标准状态
-    servo.go_home()
 
     # 4. 打开摄像头，选择 V4L2 模式，（选csi摄像头的模式很卡）
     # 设置编码格式为 MJPG，分辨率和帧率
@@ -34,6 +38,22 @@ def main():
         print("摄像头打开失败")
         return
 
+    try:
+        servo = ServoController(port=SERVO_PORT, baudrate=SERVO_BAUDRATE)
+        tracker = GimbalTracker(servo)
+        servo.go_home()
+    except Exception as error:
+        print(f"servo unavailable: {error}")
+
+    lock_enabled = {"value": False}
+
+    def wait_for_enter():
+        input("请等带识别稳定后开启锁定模式")
+        lock_enabled["value"] = True
+        print("锁定模式已开启")
+
+    threading.Thread(target=wait_for_enter, daemon=True).start()
+
     prev_time = time.time()
 
     while True:
@@ -44,18 +64,19 @@ def main():
             break
 
         # 6. 视觉识别目标
-        found, target = detect_target(frame)
+        found, target, mask = detect_target(frame)
 
         if found:
             # 7. 画目标框
             draw_target(frame, target)
 
             # 8. 调用云台锁定
-            tracker.update(
-                target["cx"],
-                target["cy"],
-                frame
-            )
+            if lock_enabled["value"] and tracker is not None:
+                tracker.update(
+                    target["cx"],
+                    target["cy"],
+                    frame
+                )
             #把数据打印在终端，方便调试
             print(
                 f"target center: x={target['cx']}, y={target['cy']}, "
@@ -84,6 +105,7 @@ def main():
 
         # 13. 显示画面
         cv2.imshow(WINDOW_NAME, frame)
+        cv2.imshow("mask", mask)
 
         # 14. 按 q 退出
         if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -93,7 +115,8 @@ def main():
     # 15. 释放资源
     cap.release()
     cv2.destroyAllWindows()
-    servo.close()
+    if servo is not None:
+        servo.close()
 
 
 if __name__ == "__main__":

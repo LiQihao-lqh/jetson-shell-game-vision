@@ -28,17 +28,17 @@ from config import (
 
 #这个文件是视觉识别算法模块，负责从一帧画面中识别目标，并输出目标信息。
 def detect_target(frame):
-    """
-    目标识别函数：
-    输入一帧画面 frame，识别红色目标。
+    
+    #目标识别函数：
+    #输入一帧画面 frame，识别红色目标。
 
-    返回：
-    found:
-        是否找到有效目标，True 表示找到，False 表示没找到。
-    target:
-        目标信息字典，里面包含 cx、cy、x、y、w、h、area、aspect_ratio。
-        如果没找到目标，target 为 None。
-    """
+    #返回：
+    #found:
+        #是否找到有效目标，True 表示找到，False 表示没找到。
+    #target:
+        #目标信息字典，里面包含 cx、cy、x、y、w、h、area、aspect_ratio。
+        #如果没找到目标，target 为 None。
+    
 
     #把读取到的画面从 BGR 颜色空间转换到 HSV 颜色空间
     #cvtcolor，意思是convert（转换）。转换看颜色的方式，BGR是OpenCV默认的颜色空间，HSV更适合做颜色分割
@@ -116,7 +116,7 @@ def detect_target(frame):
     #len(valid_contours) 表示有效轮廓列表的长度,len()函数返回列表的元素个数
     #如果有效轮廓列表的长度等于0，说明没有有效轮廓
     if len(valid_contours) == 0:
-        return False, None
+        return False, None, mask
 
     # 找到面积最大的有效轮廓
     #key=lambda item: item[1] 表示根据每个轮廓的面积来判断最大值
@@ -135,7 +135,9 @@ def detect_target(frame):
     cx = x + w // 2
     cy = y + h // 2
 
-    # 用字典保存目标信息，方便 main.py 和 gimbal_tracker.py 使用
+    # 用字典（dictionary）保存目标信息，方便 main.py 和 gimbal_tracker.py 使用
+    #info-information
+    #"x": x，意思是 把变量 x 的值，存到字典里，名字叫 "x"
     target_info = {
         "contour": contour,
         "area": area,
@@ -148,15 +150,13 @@ def detect_target(frame):
         "cy": cy,
     }
 
-    return True, target_info
+    return True, target_info, mask
 
 
 def draw_target(frame, target):
-    """
-    目标显示函数：
-    在原图 frame 上画出目标矩形框、目标中心点和目标信息。
-    """
-
+    
+    #先把数据取出来这样后面就不用写 target["x"]
+    #从 target 这个字典里，取出名字叫 "x" 的数据
     x = target["x"]
     y = target["y"]
     w = target["w"]

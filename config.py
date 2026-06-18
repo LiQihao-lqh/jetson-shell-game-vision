@@ -7,6 +7,9 @@
 # 到 Jetson 上如果打不开，可以改成 1、2 试试
 CAMERA_INDEX = 0
 
+SERVO_PORT = "/dev/ttyACM0"
+SERVO_BAUDRATE = 115200
+
 #自己设置摄像头分辨率
 FRAME_WIDTH = 640
 FRAME_HEIGHT = 480

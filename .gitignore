@@ -1,18 +1,42 @@
-.venv/
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
+# Virtual environment
+.venv/
+
+# Editor / IDE
 .vscode/
+.idea/
 
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Dataset
+dataset/
+
+# YOLO / training outputs
+runs/
+wandb/
+
+# Models / weights / copied training artifacts
+models/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.weights
+
+# Videos
 *.mp4
 *.avi
 *.mov
 *.mkv
-*.jpg
-*.png
 
-# Hiwonder Jetson SDK, not used in current Windows pyserial project
+# Hiwonder Jetson SDK
 sdk/
-
-.DS_Store
-Thumbs.db

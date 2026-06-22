@@ -5,9 +5,9 @@
 # 摄像头编号
 # Windows 上 USB 摄像头通常是 0
 # 到 Jetson 上如果打不开，可以改成 1、2 试试
-CAMERA_INDEX = 0
+CAMERA_INDEX = 1
 
-SERVO_PORT = "/dev/ttyACM0"
+SERVO_PORT = "COM4"
 SERVO_BAUDRATE = 115200
 
 #自己设置摄像头分辨率
@@ -43,3 +43,13 @@ MAX_ASPECT_RATIO = 2.0
 
 # 形态学卷积核的大小
 MORPH_KERNEL_SIZE = 5
+
+#yolo模型选择
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+MODEL_PATH = PROJECT_ROOT / "models" / "trained" / "card_seg_v4" / "weights" / "best.pt"
+
+YOLO_CONF = 0.4
+YOLO_DEVICE = 0

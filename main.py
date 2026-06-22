@@ -13,9 +13,21 @@ from config import (
 
 #传参数：servo，是舵机控制器对象，用于控制云台舵机的位置
 #detect_target, draw_target，GimbalTracker都是main里面新创建的，用于接受servo对象
-from vision_detector import detect_target, draw_target
-from servo_controller import ServoController
-from tracker_controller import GimbalTracker
+from src.vision_detector import detect_target, draw_target
+from src.servo_controller import ServoController
+from src.tracker_controller import GimbalTracker
+import platform
+
+def open_camera(camera_index):
+    if platform.system() == "Windows":
+        cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+    else:
+        cap = cv2.VideoCapture(camera_index, cv2.CAP_V4L2)
+
+    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+
+    return cap
+
 
 
 def main():
@@ -29,8 +41,7 @@ def main():
 
     # 4. 打开摄像头，选择 V4L2 模式，（选csi摄像头的模式很卡）
     # 设置编码格式为 MJPG，分辨率和帧率
-    cap = cv2.VideoCapture(CAMERA_INDEX, cv2.CAP_V4L2)
-    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+    cap = open_camera(CAMERA_INDEX)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
 

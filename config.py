@@ -5,7 +5,7 @@
 # 摄像头编号
 # Windows 上 USB 摄像头通常是 0
 # 到 Jetson 上如果打不开，可以改成 1、2 试试
-CAMERA_INDEX = 1
+CAMERA_INDEX = 0
 
 SERVO_PORT = "COM4"
 SERVO_BAUDRATE = 115200

@@ -16,6 +16,10 @@ class GimbalTracker:
 
         # 小误差不动，减少画面抖动
         self.dead_zone = 20
+        # 单次最大移动幅度
+        #防止过冲，抖动
+        self.pan_max_step = 10
+        self.tilt_max_step = 10
 
         # 舵机安全范围
         self.pan_min = 200
@@ -43,13 +47,17 @@ class GimbalTracker:
         error_y = target_y - image_center_y
 
         #abs(error_x) 表示取误差的绝对值，确保误差为正数
+        #死区限制，如果小于死区，就不调整云台舵机位置
         if abs(error_x) > self.dead_zone:
-            #根据误差调整云台舵机位置
-            self.pan -= error_x * self.pan_gain
+
+            #根据误差调整云台舵机位置，同时限幅
+            pan_step = self._clamp(error_x * self.pan_gain, -self.pan_max_step, self.pan_max_step)
+            self.pan -= pan_step
 
         if abs(error_y) > self.dead_zone:
-            #根据误差调整云台舵机位置
-            self.tilt += error_y * self.tilt_gain
+            #根据误差调整云台舵机位置，同时限幅
+            tilt_step = self._clamp(error_y * self.tilt_gain, -self.tilt_max_step, self.tilt_max_step)
+            self.tilt += tilt_step
 
         #限制舵机位置在安全范围内.clamp：限制函数
         self.pan = self._clamp(self.pan, self.pan_min, self.pan_max)

@@ -16,6 +16,7 @@ from config import (
 from src.vision_detector import detect_target, draw_target
 from src.servo_controller import ServoController
 from src.tracker_controller import GimbalTracker
+from src.tuning_panel import create_tuning_panel, update_tracker_from_panel
 import platform
 
 def open_camera(camera_index):
@@ -49,14 +50,22 @@ def main():
         print("摄像头打开失败")
         return
 
+#try：保护舵机控制器对象和云台追踪对象的创建，防止异常导致程序崩溃
+#创建滑条调参面板
     try:
+        #打开舵机控制串口
         servo = ServoController(port=SERVO_PORT, baudrate=SERVO_BAUDRATE)
+        #调用舵机控制参数面板
         tracker = GimbalTracker(servo)
+        #创建窗口
+        create_tuning_panel(tracker)
         servo.go_home()
+        #报错退出，打印错误信息
     except Exception as error:
         print(f"servo unavailable: {error}")
 
     lock_enabled = {"value": False}
+    
 
     def wait_for_enter():
         input("请等带识别稳定后开启锁定模式")
@@ -73,6 +82,9 @@ def main():
         if not ret:
             print("画面读取失败")
             break
+
+        if tracker is not None:
+            update_tracker_from_panel(tracker)
 
         # 6. 视觉识别目标
         found, target, mask = detect_target(frame)
